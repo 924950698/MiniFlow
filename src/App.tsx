@@ -1,44 +1,73 @@
-import React, { useCallback } from 'react';
-import {
-  ReactFlow,
-  MiniMap,
-  Controls,
-  Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-} from '@xyflow/react';
- 
+import { ReactFlow, Background, Controls,  applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
- 
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
- 
+import { useState, useCallback } from 'react';
+
+
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
- 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+
+  const initialNodes = [
+    {
+      id: 'n1',
+      position: { x: 0, y: 0 },
+      data: { label: 'Node 1' },
+      type: 'input',
+    },
+    {
+      id: 'n2',
+      position: { x: 100, y: 100 },
+      data: { label: 'Node 2' },
+    },
+     {
+      id: 'n3',
+      position: { x: 200, y: 200 },
+      data: { label: 'Node 3' },
+    },
+  ];
+
+  const initialEdges = [
+    {
+      id: 'n1-n2',
+      source: 'n1',
+      target: 'n2',
+      type: 'step',
+      label: 'connects with',
+    },
+     {
+      id: 'n2-n3',
+      source: 'n2',
+      target: 'n3',
+    },
+  ];
+
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    [],
   );
- 
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+    [],
+  );
+  const onConnect = useCallback(
+    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    [],
+  );
+
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlow
+    <div style={{ height: '100%', width: '100%' }}>
+      <ReactFlow 
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
       >
+        <Background />
         <Controls />
-        <MiniMap />
-        <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
     </div>
   );
 }
+
