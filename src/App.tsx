@@ -15,7 +15,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import { useCallback, useState } from 'react';
 
-import { LlmConfigPanel } from './components/LlmConfigPanel';
+import { NodeConfigPanel } from './components/NodeConfigPanel';
 import { NodeCreator } from './components/NodeCreator';
 import { initialEdges, edgeTypes } from './edges';
 import { initialNodes, nodeTypes } from './nodes';
@@ -24,7 +24,7 @@ import type { AppNode, WorkflowNodeData } from './nodes/types';
 export default function App() {
   const [nodes, setNodes] = useState<AppNode[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
-  const [selectedLlmNode, setSelectedLlmNode] = useState<AppNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<AppNode | null>(null);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<AppNode>[]) =>
@@ -52,7 +52,7 @@ export default function App() {
           !deletedIds.has(edge.source) && !deletedIds.has(edge.target),
       ),
     );
-    setSelectedLlmNode((current) =>
+    setSelectedNode((current) =>
       current && deletedIds.has(current.id) ? null : current,
     );
   }, []);
@@ -68,7 +68,7 @@ export default function App() {
           node.id === nodeId ? { ...node, data: { ...node.data, ...data } } : node,
         ),
       );
-      setSelectedLlmNode((current) =>
+      setSelectedNode((current) =>
         current?.id === nodeId
           ? { ...current, data: { ...current.data, ...data } }
           : current,
@@ -79,40 +79,50 @@ export default function App() {
 
   const onSelectionChange = useCallback(
     ({ nodes: selectedNodes }: OnSelectionChangeParams) => {
-      const llmNode =
-        selectedNodes.length === 1 && selectedNodes[0].type === 'llm'
-          ? (selectedNodes[0] as AppNode)
-          : null;
-      setSelectedLlmNode(llmNode);
+      const node =
+        selectedNodes.length === 1 ? (selectedNodes[0] as AppNode) : null;
+      setSelectedNode(node);
     },
     [],
   );
 
+  const onClosePanel = useCallback(() => {
+    setSelectedNode(null);
+    setNodes((nds) => nds.map((node) => ({ ...node, selected: false })));
+  }, []);
+
   return (
-    <div style={{ height: '100%', width: '100%' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodesDelete={onNodesDelete}
-        onSelectionChange={onSelectionChange}
-        deleteKeyCode={['Backspace', 'Delete']}
-        fitView
-      >
-        <Background />
-        <Controls />
-        <Panel position="top-left" className="react-flow-hint">
-          拖拽移动节点 · 连线 · Delete 删除 · 选中 LLM 节点可配置并调用 Kimi
-        </Panel>
-        <NodeCreator onAddNode={onAddNode} />
-        {selectedLlmNode && (
-          <LlmConfigPanel node={selectedLlmNode} onUpdateNode={onUpdateNode} />
-        )}
-      </ReactFlow>
+    <div className={`app-shell${selectedNode ? ' app-shell--with-panel' : ''}`}>
+      <div className="app-canvas">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onNodesDelete={onNodesDelete}
+          onSelectionChange={onSelectionChange}
+          deleteKeyCode={['Backspace', 'Delete']}
+          fitView
+        >
+          <Background />
+          <Controls />
+          <Panel position="top-left" className="react-flow-hint">
+            点击节点右侧配置 · 拖拽连线 · Delete 删除
+          </Panel>
+          <NodeCreator onAddNode={onAddNode} />
+        </ReactFlow>
+      </div>
+
+      {selectedNode && (
+        <NodeConfigPanel
+          node={selectedNode}
+          onUpdateNode={onUpdateNode}
+          onClose={onClosePanel}
+        />
+      )}
     </div>
   );
 }

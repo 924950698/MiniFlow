@@ -132,8 +132,8 @@ export function ConditionNode({ data }: NodeProps<AppNode>) {
         {data.condition || '未配置条件表达式'}
       </div>
       <div className="workflow-node__branch-labels">
-        <span>是</span>
-        <span>否</span>
+        <span>{data.trueLabel ?? '是'}</span>
+        <span>{data.falseLabel ?? '否'}</span>
       </div>
     </WorkflowNodeShell>
   );

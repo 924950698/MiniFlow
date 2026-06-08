@@ -31,19 +31,34 @@ export const initialNodes: AppNode[] = [
     id: 'cond-1',
     type: 'condition',
     position: { x: 460, y: 200 },
-    data: { label: '条件分支', condition: 'result.score > 0.8' },
+    data: {
+      label: '条件分支',
+      condition: 'result.score > 0.8',
+      trueLabel: '通过',
+      falseLabel: '拒绝',
+    },
   },
   {
     id: 'http-1',
     type: 'http',
     position: { x: 700, y: 80 },
-    data: { label: 'HTTP 请求', method: 'POST', url: '/api/notify' },
+    data: {
+      label: 'HTTP 请求',
+      method: 'POST',
+      url: '/api/notify',
+      headers: '{"Content-Type": "application/json"}',
+      body: '{"message": "{{llm-1.lastResult}}"}',
+    },
   },
   {
     id: 'end-1',
     type: 'end',
     position: { x: 940, y: 200 },
-    data: { label: '结束' },
+    data: {
+      label: '结束',
+      outputVariable: 'finalResult',
+      variables: '{"result": "{{llm-1.lastResult}}"}',
+    },
   },
 ];
 
