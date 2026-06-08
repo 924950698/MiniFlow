@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { proxyKimiChat, type KimiChatRequest } from '../../server/moonshot';
+import { proxyKimiChat, type KimiChatRequest } from '../_lib/moonshot';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

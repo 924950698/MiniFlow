@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { handleNotifyPayload } from '../../server/moonshot';
+import { handleNotifyPayload } from './_lib/moonshot';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

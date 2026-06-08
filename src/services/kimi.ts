@@ -33,7 +33,7 @@ function formatKimiError(message: string | undefined, status: number) {
   }
 
   if (message.includes('Invalid Authentication')) {
-    return 'API Key 无效或未配置，请检查 .env 中的 MOONSHOT_API_KEY 是否正确，并重启开发服务器';
+    return 'API Key 无效或未配置，请检查 MOONSHOT_API_KEY 是否正确（本地 .env 或 Vercel 环境变量）';
   }
 
   if (message.includes('insufficient balance') || message.includes('余额')) {
@@ -80,9 +80,19 @@ export async function callKimi({
     }),
   });
 
-  const data = (await response.json()) as KimiChatResponse & {
-    error?: string | { message?: string };
-  };
+  const rawBody = await response.text();
+  let data: KimiChatResponse & { error?: string | { message?: string } };
+
+  try {
+    data = JSON.parse(rawBody) as typeof data;
+  } catch {
+    throw new Error(
+      formatKimiError(
+        rawBody.trim() || '服务器返回了非 JSON 响应，请检查 API 配置或稍后重试',
+        response.status,
+      ),
+    );
+  }
 
   if (!response.ok) {
     const apiError =

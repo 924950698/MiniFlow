@@ -4,7 +4,7 @@ import {
   handleNotifyPayload,
   proxyKimiChat,
   type KimiChatRequest,
-} from './server/moonshot';
+} from './api/_lib/moonshot';
 
 function readBody(req: import('http').IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
