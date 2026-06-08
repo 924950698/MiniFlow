@@ -1,13 +1,27 @@
-import type { AppNode } from './types';
+import type { WorkflowNodeData, WorkflowNodeType } from './types';
 
 export type NodeTemplate = {
   label: string;
-  type?: AppNode['type'];
+  type: WorkflowNodeType;
+  data?: Partial<WorkflowNodeData>;
 };
 
 export const nodeTemplates: NodeTemplate[] = [
-  { label: '默认节点' },
-  { label: '输入节点', type: 'input' },
-  { label: '输出节点', type: 'output' },
-  { label: '位置节点', type: 'position-logger' },
+  { label: '开始节点', type: 'start' },
+  {
+    label: 'LLM 调用',
+    type: 'llm',
+    data: { model: 'kimi-k2.5', systemPrompt: '', userInput: '' },
+  },
+  {
+    label: 'HTTP 请求',
+    type: 'http',
+    data: { method: 'GET', url: '' },
+  },
+  {
+    label: '条件分支',
+    type: 'condition',
+    data: { condition: '' },
+  },
+  { label: '结束节点', type: 'end' },
 ];

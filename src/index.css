@@ -59,3 +59,273 @@ body,
   background: #e2e8f0;
   border-color: #94a3b8;
 }
+
+.workflow-node {
+  min-width: 160px;
+  padding: 10px 12px;
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.workflow-node__header {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.workflow-node__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.workflow-node__titles {
+  min-width: 0;
+}
+
+.workflow-node__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.workflow-node__subtitle {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.workflow-node__detail {
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #475569;
+  background: #f8fafc;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.workflow-node__detail--mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.workflow-node__branch-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 20%;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.workflow-node--start {
+  border-left: 3px solid #22c55e;
+}
+
+.workflow-node--start .workflow-node__icon {
+  color: #16a34a;
+  background: #dcfce7;
+}
+
+.workflow-node--llm {
+  border-left: 3px solid #8b5cf6;
+}
+
+.workflow-node--llm .workflow-node__icon {
+  color: #7c3aed;
+  background: #ede9fe;
+}
+
+.workflow-node--http {
+  border-left: 3px solid #3b82f6;
+}
+
+.workflow-node--http .workflow-node__icon {
+  color: #2563eb;
+  background: #dbeafe;
+}
+
+.workflow-node--condition {
+  border-left: 3px solid #f59e0b;
+}
+
+.workflow-node--condition .workflow-node__icon {
+  color: #d97706;
+  background: #fef3c7;
+}
+
+.workflow-node--end {
+  border-left: 3px solid #ef4444;
+}
+
+.workflow-node--end .workflow-node__icon {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.workflow-node__badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.workflow-node__badge--running {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.workflow-node__badge--success {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.workflow-node__badge--error {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.react-flow__panel.llm-config-panel {
+  width: min(360px, calc(100vw - 24px));
+  max-height: 42vh;
+  margin: 12px;
+  padding: 14px;
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.llm-config-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.llm-config-panel__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.llm-config-panel__subtitle {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.llm-config-panel__status {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.llm-config-panel__status--idle {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.llm-config-panel__status--running {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.llm-config-panel__status--success {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.llm-config-panel__status--error {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.llm-config-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.llm-config-panel__field select,
+.llm-config-panel__field textarea {
+  padding: 8px 10px;
+  font: inherit;
+  color: #1e293b;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.llm-config-panel__run {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: #7c3aed;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.llm-config-panel__run:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.llm-config-panel__run:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.llm-config-panel__error {
+  margin-top: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #b91c1c;
+  background: #fef2f2;
+  border-radius: 6px;
+}
+
+.llm-config-panel__result {
+  margin-top: 12px;
+}
+
+.llm-config-panel__result-title {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.llm-config-panel__result pre {
+  margin: 0;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}

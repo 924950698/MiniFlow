@@ -27,7 +27,7 @@ export function NodeCreator({ onAddNode }: NodeCreatorProps) {
         id: createNodeId(),
         type: template.type,
         position: { x: center.x + offset, y: center.y + offset },
-        data: { label: template.label },
+        data: { label: template.label, ...template.data },
       });
     },
     [onAddNode, screenToFlowPosition],
@@ -39,7 +39,7 @@ export function NodeCreator({ onAddNode }: NodeCreatorProps) {
       <div className="node-creator__buttons">
         {nodeTemplates.map((template) => (
           <button
-            key={template.type ?? 'default'}
+            key={template.type}
             type="button"
             className="node-creator__button"
             onClick={() => handleAdd(template)}
