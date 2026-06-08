@@ -27,6 +27,23 @@ MOONSHOT_API_BASE=https://api.moonshot.cn/v1
 
 ## 部署到 Vercel
 
+本地 `.env` **不会**随 Git 部署到 Vercel，必须在 Vercel 控制台单独配置。
+
+### 配置 MOONSHOT_API_KEY（必做）
+
+1. 打开 [Vercel 项目控制台](https://vercel.com/dashboard) → 选择 **mini-flow** 项目
+2. **Settings** → **Environment Variables**
+3. 点击 **Add**，填写：
+   - **Key**：`MOONSHOT_API_KEY`
+   - **Value**：从本地 `.env` 复制你的 `sk-...` 密钥（[在此获取](https://platform.moonshot.cn/console/api-keys)）
+   - **Environment**：勾选 **Production**（建议 Preview、Development 也勾选）
+4. 点击 **Save**
+5. **Deployments** → 最新部署右侧 **⋯** → **Redeploy**（环境变量仅对新部署生效）
+
+可选变量 `MOONSHOT_API_BASE`，默认 `https://api.moonshot.cn/v1`。
+
+> 若仍提示未配置：确认 Value 不是 `your_moonshot_api_key_here` 占位符，且已 Redeploy。
+
 ### 方式一：GitHub 导入（推荐）
 
 1. 将代码推送到 GitHub

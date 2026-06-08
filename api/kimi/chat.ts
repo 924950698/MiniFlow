@@ -12,8 +12,8 @@ type KimiChatRequest = {
 
 function getMoonshotConfig() {
   return {
-    apiKey: process.env.MOONSHOT_API_KEY ?? '',
-    apiBase: process.env.MOONSHOT_API_BASE ?? 'https://api.moonshot.cn/v1',
+    apiKey: (process.env.MOONSHOT_API_KEY ?? '').trim(),
+    apiBase: (process.env.MOONSHOT_API_BASE ?? 'https://api.moonshot.cn/v1').trim(),
   };
 }
 
@@ -43,7 +43,7 @@ export default async function handler(request: Request): Promise<Response> {
       return jsonResponse(
         {
           error:
-            '未配置有效的 MOONSHOT_API_KEY。请在 Vercel 项目 Settings → Environment Variables 中添加 MOONSHOT_API_KEY',
+            '未配置有效的 MOONSHOT_API_KEY。请在 Vercel → Settings → Environment Variables 添加 MOONSHOT_API_KEY（勾选 Production），保存后进入 Deployments 重新 Deploy。',
         },
         500,
       );
