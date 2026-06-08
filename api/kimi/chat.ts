@@ -1,23 +1,71 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+const PLACEHOLDER_KEYS = new Set([
+  '',
+  'your_moonshot_api_key_here',
+  'sk-xxxxxxxx',
+]);
 
-import { proxyKimiChat, type KimiChatRequest } from '../_lib/moonshot';
+type KimiChatRequest = {
+  model: string;
+  messages: Array<{ role: string; content: string }>;
+  temperature?: number;
+};
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed' });
+function getMoonshotConfig() {
+  return {
+    apiKey: process.env.MOONSHOT_API_KEY ?? '',
+    apiBase: process.env.MOONSHOT_API_BASE ?? 'https://api.moonshot.cn/v1',
+  };
+}
+
+function isApiKeyConfigured(apiKey: string): boolean {
+  return Boolean(apiKey) && !PLACEHOLDER_KEYS.has(apiKey.trim());
+}
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+export const config = { runtime: 'edge' };
+
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   try {
-    const body = req.body as KimiChatRequest;
-    const result = await proxyKimiChat(body);
+    const body = (await request.json()) as KimiChatRequest;
+    const { apiKey, apiBase } = getMoonshotConfig();
 
-    res.status(result.status);
-    res.setHeader('Content-Type', 'application/json');
-    return res.send(result.body);
-  } catch (error) {
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Kimi API 请求失败',
+    if (!isApiKeyConfigured(apiKey)) {
+      return jsonResponse(
+        {
+          error:
+            '未配置有效的 MOONSHOT_API_KEY。请在 Vercel 项目 Settings → Environment Variables 中添加 MOONSHOT_API_KEY',
+        },
+        500,
+      );
+    }
+
+    const upstream = await fetch(`${apiBase}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
     });
+
+    return new Response(await upstream.text(), {
+      status: upstream.status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return jsonResponse(
+      { error: error instanceof Error ? error.message : 'Kimi API 请求失败' },
+      500,
+    );
   }
 }

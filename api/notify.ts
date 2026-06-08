@@ -1,27 +1,36 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
 
-import { handleNotifyPayload } from './_lib/moonshot';
+export const config = { runtime: 'edge' };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   try {
-    const rawBody =
-      typeof req.body === 'string'
-        ? req.body
-        : req.body
-          ? JSON.stringify(req.body)
-          : '';
+    const rawBody = await request.text();
+    let payload: unknown = rawBody;
 
-    res.status(200);
-    res.setHeader('Content-Type', 'application/json');
-    return res.send(handleNotifyPayload(rawBody));
-  } catch (error) {
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Notify mock failed',
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      // keep raw string
+    }
+
+    return jsonResponse({
+      ok: true,
+      received: payload,
+      message: 'Mock notify endpoint',
     });
+  } catch (error) {
+    return jsonResponse(
+      { error: error instanceof Error ? error.message : 'Notify mock failed' },
+      500,
+    );
   }
 }
