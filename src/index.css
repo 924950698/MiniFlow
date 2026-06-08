@@ -10,3 +10,52 @@ body,
   height: 100%;
   margin: 0;
 }
+
+.react-flow__panel.react-flow-hint {
+  margin: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.react-flow__panel.node-creator {
+  margin: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.node-creator__title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.node-creator__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.node-creator__button {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.node-creator__button:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}

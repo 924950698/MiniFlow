@@ -1,73 +1,81 @@
-import { ReactFlow, Background, Controls,  applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  Panel,
+  applyEdgeChanges,
+  applyNodeChanges,
+  addEdge,
+  type Connection,
+  type Edge,
+  type EdgeChange,
+  type NodeChange,
+} from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
+import { NodeCreator } from './components/NodeCreator';
+import { initialEdges, edgeTypes } from './edges';
+import { initialNodes, nodeTypes } from './nodes';
+import type { AppNode } from './nodes/types';
 
 export default function App() {
-
-  const initialNodes = [
-    {
-      id: 'n1',
-      position: { x: 0, y: 0 },
-      data: { label: 'Node 1' },
-      type: 'input',
-    },
-    {
-      id: 'n2',
-      position: { x: 100, y: 100 },
-      data: { label: 'Node 2' },
-    },
-     {
-      id: 'n3',
-      position: { x: 200, y: 200 },
-      data: { label: 'Node 3' },
-    },
-  ];
-
-  const initialEdges = [
-    {
-      id: 'n1-n2',
-      source: 'n1',
-      target: 'n2',
-      type: 'step',
-      label: 'connects with',
-    },
-     {
-      id: 'n2-n3',
-      source: 'n2',
-      target: 'n3',
-    },
-  ];
-
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const [nodes, setNodes] = useState<AppNode[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
   const onNodesChange = useCallback(
-    (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    (changes: NodeChange<AppNode>[]) =>
+      setNodes((nds) => applyNodeChanges(changes, nds)),
     [],
   );
+
   const onEdgesChange = useCallback(
-    (changes) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+    (changes: EdgeChange[]) =>
+      setEdges((eds) => applyEdgeChanges(changes, eds)),
     [],
   );
+
   const onConnect = useCallback(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    (connection: Connection) =>
+      setEdges((eds) => addEdge(connection, eds)),
     [],
   );
+
+  const onNodesDelete = useCallback((deleted: AppNode[]) => {
+    const deletedIds = new Set(deleted.map((node) => node.id));
+    setEdges((eds) =>
+      eds.filter(
+        (edge) =>
+          !deletedIds.has(edge.source) && !deletedIds.has(edge.target),
+      ),
+    );
+  }, []);
+
+  const onAddNode = useCallback((node: AppNode) => {
+    setNodes((nds) => [...nds, node]);
+  }, []);
 
   return (
     <div style={{ height: '100%', width: '100%' }}>
-      <ReactFlow 
+      <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodesDelete={onNodesDelete}
+        deleteKeyCode={['Backspace', 'Delete']}
+        fitView
       >
         <Background />
         <Controls />
+        <Panel position="top-left" className="react-flow-hint">
+          拖拽移动节点 · 从连接点拖出连线 · 选中后按 Delete 删除 · 右上角添加节点
+        </Panel>
+        <NodeCreator onAddNode={onAddNode} />
       </ReactFlow>
     </div>
   );
 }
-
