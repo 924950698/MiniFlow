@@ -14,7 +14,10 @@ export const initialNodes: AppNode[] = [
     id: 'start-1',
     type: 'start',
     position: { x: 0, y: 200 },
-    data: { label: '开始' },
+    data: {
+      label: '开始',
+      variables: '{"query": "用一句话介绍你自己"}',
+    },
   },
   {
     id: 'llm-1',
@@ -24,7 +27,7 @@ export const initialNodes: AppNode[] = [
       label: 'LLM 调用',
       model: 'kimi-k2.5',
       systemPrompt: '你是 Kimi，请简洁准确地回答用户问题。',
-      userInput: '用一句话介绍你自己',
+      userInput: '{{query}}',
     },
   },
   {
@@ -33,7 +36,7 @@ export const initialNodes: AppNode[] = [
     position: { x: 460, y: 200 },
     data: {
       label: '条件分支',
-      condition: 'result.score > 0.8',
+      condition: "(nodes['llm-1'].lastResult || '').length > 0",
       trueLabel: '通过',
       falseLabel: '拒绝',
     },

@@ -85,6 +85,49 @@ function attachKimiMiddleware(
   apiBase: string,
 ) {
   server.middlewares.use('/api/kimi/chat', createKimiHandler(apiKey, apiBase));
+
+  server.middlewares.use(
+    '/api/notify',
+    (
+      req: import('http').IncomingMessage,
+      res: import('http').ServerResponse,
+      next: () => void,
+    ) => {
+      if (req.method !== 'POST') {
+        next();
+        return;
+      }
+
+      readBody(req)
+        .then((rawBody) => {
+          let payload: unknown = rawBody;
+          try {
+            payload = JSON.parse(rawBody);
+          } catch {
+            // keep raw string
+          }
+
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(
+            JSON.stringify({
+              ok: true,
+              received: payload,
+              message: 'Mock notify endpoint',
+            }),
+          );
+        })
+        .catch((error) => {
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(
+            JSON.stringify({
+              error: error instanceof Error ? error.message : 'Notify mock failed',
+            }),
+          );
+        });
+    },
+  );
 }
 
 export function kimiApiPlugin(apiKey: string, apiBase: string): Plugin {

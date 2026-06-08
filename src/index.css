@@ -196,6 +196,97 @@ body,
   background: #fee2e2;
 }
 
+.workflow-node__badge--skipped {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.workflow-node--active {
+  box-shadow: 0 0 0 2px #93c5fd;
+}
+
+.workflow-node--done {
+  box-shadow: 0 0 0 2px #86efac;
+}
+
+.workflow-node--failed {
+  box-shadow: 0 0 0 2px #fca5a5;
+}
+
+.react-flow__panel.run-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.run-toolbar__button {
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: #16a34a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+  transition: background 0.15s;
+}
+
+.run-toolbar__button:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.run-toolbar__button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.run-toolbar__result {
+  max-width: 420px;
+  padding: 10px 14px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.run-toolbar__result--success {
+  border-color: #86efac;
+}
+
+.run-toolbar__result--error {
+  border-color: #fca5a5;
+}
+
+.run-toolbar__result-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.run-toolbar__result-body {
+  margin: 0;
+  max-height: 120px;
+  overflow: auto;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #475569;
+}
+
+.run-toolbar__result-error {
+  color: #b91c1c;
+}
+
 .app-shell {
   display: flex;
   height: 100%;
@@ -367,6 +458,11 @@ body,
 .node-config__status--error {
   color: #b91c1c;
   background: #fee2e2;
+}
+
+.node-config__status--skipped {
+  color: #64748b;
+  background: #f1f5f9;
 }
 
 .node-config__node-id {

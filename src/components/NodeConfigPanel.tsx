@@ -9,9 +9,11 @@ import {
 import {
   NODE_TYPE_LABELS,
   type AppNode,
+  type NodeRunStatus,
   type WorkflowNodeData,
   type WorkflowNodeType,
 } from '../nodes/types';
+import { formatDisplayValue } from '../engine/variables';
 
 type NodeConfigPanelProps = {
   node: AppNode;
@@ -48,6 +50,51 @@ const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 const VARIABLES_HINT =
   'JSON 格式，支持 {{nodeId.output}} 引用上游节点输出，例如 {"input": "{{llm-1.lastResult}}"}';
+
+const RUN_STATUS_LABEL: Record<NodeRunStatus, string> = {
+  idle: '待运行',
+  running: '运行中',
+  success: '成功',
+  error: '失败',
+  skipped: '已跳过',
+};
+
+function RunIoSection({ data }: { data: WorkflowNodeData }) {
+  const runStatus = data.runStatus ?? 'idle';
+  const hasRunData =
+    runStatus !== 'idle' ||
+    data.runInput != null ||
+    data.runOutput != null ||
+    data.runError != null;
+
+  if (!hasRunData) {
+    return null;
+  }
+
+  return (
+    <Section title="运行结果">
+      <div className="node-config__status-row">
+        <span className={`node-config__status node-config__status--${runStatus}`}>
+          {RUN_STATUS_LABEL[runStatus]}
+        </span>
+      </div>
+
+      {data.runError && <div className="node-config__error">{data.runError}</div>}
+
+      {data.runInput != null && (
+        <Field label="运行输入">
+          <pre className="node-config__result">{formatDisplayValue(data.runInput)}</pre>
+        </Field>
+      )}
+
+      {data.runOutput != null && (
+        <Field label="运行输出">
+          <pre className="node-config__result">{formatDisplayValue(data.runOutput)}</pre>
+        </Field>
+      )}
+    </Section>
+  );
+}
 
 function StartConfig({
   data,
@@ -394,6 +441,7 @@ export function NodeConfigPanel({
         </Section>
 
         <TypeSpecificConfig node={node} data={data} update={update} />
+        <RunIoSection data={data} />
       </div>
     </aside>
   );

@@ -4,6 +4,13 @@ export type WorkflowNodeType = 'start' | 'llm' | 'http' | 'condition' | 'end';
 
 export type LlmNodeStatus = 'idle' | 'running' | 'success' | 'error';
 
+export type NodeRunStatus =
+  | 'idle'
+  | 'running'
+  | 'success'
+  | 'error'
+  | 'skipped';
+
 export type WorkflowNodeData = {
   label: string;
   description?: string;
@@ -22,6 +29,10 @@ export type WorkflowNodeData = {
   trueLabel?: string;
   falseLabel?: string;
   outputVariable?: string;
+  runStatus?: NodeRunStatus;
+  runInput?: unknown;
+  runOutput?: unknown;
+  runError?: string;
 };
 
 export type AppNode = Node<WorkflowNodeData, WorkflowNodeType>;

@@ -17,6 +17,7 @@ import { useCallback, useState } from 'react';
 
 import { NodeConfigPanel } from './components/NodeConfigPanel';
 import { NodeCreator } from './components/NodeCreator';
+import { RunToolbar } from './components/RunToolbar';
 import { initialEdges, edgeTypes } from './edges';
 import { initialNodes, nodeTypes } from './nodes';
 import type { AppNode, WorkflowNodeData } from './nodes/types';
@@ -110,8 +111,9 @@ export default function App() {
           <Background />
           <Controls />
           <Panel position="top-left" className="react-flow-hint">
-            点击节点右侧配置 · 拖拽连线 · Delete 删除
+            点击节点右侧配置 · 拖拽连线 · Delete 删除 · 顶部运行整条链路
           </Panel>
+          <RunToolbar nodes={nodes} edges={edges} onUpdateNode={onUpdateNode} />
           <NodeCreator onAddNode={onAddNode} />
         </ReactFlow>
       </div>
