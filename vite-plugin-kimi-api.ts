@@ -1,10 +1,10 @@
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 
-type KimiChatRequest = {
-  model: string;
-  messages: Array<{ role: string; content: string }>;
-  temperature?: number;
-};
+import {
+  handleNotifyPayload,
+  proxyKimiChat,
+  type KimiChatRequest,
+} from './server/moonshot';
 
 function readBody(req: import('http').IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -15,16 +15,6 @@ function readBody(req: import('http').IncomingMessage): Promise<string> {
     req.on('end', () => resolve(data));
     req.on('error', reject);
   });
-}
-
-const PLACEHOLDER_KEYS = new Set([
-  '',
-  'your_moonshot_api_key_here',
-  'sk-xxxxxxxx',
-]);
-
-function isApiKeyConfigured(apiKey: string) {
-  return Boolean(apiKey) && !PLACEHOLDER_KEYS.has(apiKey.trim());
 }
 
 function createKimiHandler(apiKey: string, apiBase: string) {
@@ -38,35 +28,14 @@ function createKimiHandler(apiKey: string, apiBase: string) {
       return;
     }
 
-    if (!isApiKeyConfigured(apiKey)) {
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(
-        JSON.stringify({
-          error:
-            '未配置有效的 MOONSHOT_API_KEY。请在 .env 中填入从 https://platform.moonshot.cn/console/api-keys 获取的真实 API Key，然后重启 npm run dev',
-        }),
-      );
-      return;
-    }
-
     try {
       const rawBody = await readBody(req);
       const body = JSON.parse(rawBody) as KimiChatRequest;
+      const result = await proxyKimiChat(body, { apiKey, apiBase });
 
-      const response = await fetch(`${apiBase}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      const result = await response.text();
-      res.statusCode = response.status;
+      res.statusCode = result.status;
       res.setHeader('Content-Type', 'application/json');
-      res.end(result);
+      res.end(result.body);
     } catch (error) {
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
@@ -100,22 +69,9 @@ function attachKimiMiddleware(
 
       readBody(req)
         .then((rawBody) => {
-          let payload: unknown = rawBody;
-          try {
-            payload = JSON.parse(rawBody);
-          } catch {
-            // keep raw string
-          }
-
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.end(
-            JSON.stringify({
-              ok: true,
-              received: payload,
-              message: 'Mock notify endpoint',
-            }),
-          );
+          res.end(handleNotifyPayload(rawBody));
         })
         .catch((error) => {
           res.statusCode = 500;
