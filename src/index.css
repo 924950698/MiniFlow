@@ -213,7 +213,7 @@ body,
   box-shadow: 0 0 0 2px #fca5a5;
 }
 
-.react-flow__panel.run-toolbar {
+.react-flow__panel.workflow-toolbar {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -225,29 +225,55 @@ body,
   box-shadow: none;
 }
 
-.run-toolbar__button {
-  padding: 8px 20px;
+.workflow-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.workflow-toolbar__button {
+  padding: 8px 16px;
   font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  background: #16a34a;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
-  transition: background 0.15s;
+  transition: background 0.15s, opacity 0.15s;
 }
 
-.run-toolbar__button:hover:not(:disabled) {
+.workflow-toolbar__button--run {
+  color: #fff;
+  background: #16a34a;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+}
+
+.workflow-toolbar__button--run:hover:not(:disabled) {
   background: #15803d;
 }
 
-.run-toolbar__button:disabled {
+.workflow-toolbar__button--secondary {
+  color: #334155;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.workflow-toolbar__button--secondary:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.workflow-toolbar__button:disabled {
   opacity: 0.75;
   cursor: not-allowed;
 }
 
-.run-toolbar__result {
+.workflow-toolbar__file-input {
+  display: none;
+}
+
+.workflow-toolbar__message {
   max-width: 420px;
   padding: 10px 14px;
   font-size: 12px;
@@ -257,22 +283,23 @@ body,
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.run-toolbar__result--success {
+.workflow-toolbar__message--success {
   border-color: #86efac;
 }
 
-.run-toolbar__result--error {
+.workflow-toolbar__message--error {
   border-color: #fca5a5;
+  color: #b91c1c;
 }
 
-.run-toolbar__result-label {
+.workflow-toolbar__message-label {
   display: block;
   margin-bottom: 6px;
   font-weight: 700;
   color: #334155;
 }
 
-.run-toolbar__result-body {
+.workflow-toolbar__message-body {
   margin: 0;
   max-height: 120px;
   overflow: auto;
@@ -283,7 +310,7 @@ body,
   color: #475569;
 }
 
-.run-toolbar__result-error {
+.workflow-toolbar__message-error {
   color: #b91c1c;
 }
 

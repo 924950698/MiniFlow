@@ -13,19 +13,40 @@ import {
   type OnSelectionChangeParams,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { NodeConfigPanel } from './components/NodeConfigPanel';
 import { NodeCreator } from './components/NodeCreator';
-import { RunToolbar } from './components/RunToolbar';
+import { WorkflowToolbar } from './components/WorkflowToolbar';
 import { initialEdges, edgeTypes } from './edges';
 import { initialNodes, nodeTypes } from './nodes';
 import type { AppNode, WorkflowNodeData } from './nodes/types';
+import {
+  loadWorkflowFromStorage,
+  saveWorkflowToStorage,
+} from './workflow/serialization';
+
+function getInitialWorkflow(): { nodes: AppNode[]; edges: Edge[] } {
+  const saved = loadWorkflowFromStorage();
+  if (saved) {
+    return saved;
+  }
+  return { nodes: initialNodes, edges: initialEdges };
+}
 
 export default function App() {
-  const [nodes, setNodes] = useState<AppNode[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const initial = useRef(getInitialWorkflow()).current;
+  const [nodes, setNodes] = useState<AppNode[]>(initial.nodes);
+  const [edges, setEdges] = useState<Edge[]>(initial.edges);
   const [selectedNode, setSelectedNode] = useState<AppNode | null>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      saveWorkflowToStorage(nodes, edges);
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [nodes, edges]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<AppNode>[]) =>
@@ -78,6 +99,12 @@ export default function App() {
     [],
   );
 
+  const onLoadWorkflow = useCallback((nextNodes: AppNode[], nextEdges: Edge[]) => {
+    setNodes(nextNodes);
+    setEdges(nextEdges);
+    setSelectedNode(null);
+  }, []);
+
   const onSelectionChange = useCallback(
     ({ nodes: selectedNodes }: OnSelectionChangeParams) => {
       const node =
@@ -111,9 +138,14 @@ export default function App() {
           <Background />
           <Controls />
           <Panel position="top-left" className="react-flow-hint">
-            点击节点右侧配置 · 拖拽连线 · Delete 删除 · 顶部运行整条链路
+            点击节点配置 · 拖拽连线 · 顶部运行/导出/导入 · 自动保存草稿
           </Panel>
-          <RunToolbar nodes={nodes} edges={edges} onUpdateNode={onUpdateNode} />
+          <WorkflowToolbar
+            nodes={nodes}
+            edges={edges}
+            onUpdateNode={onUpdateNode}
+            onLoadWorkflow={onLoadWorkflow}
+          />
           <NodeCreator onAddNode={onAddNode} />
         </ReactFlow>
       </div>
